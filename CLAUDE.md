@@ -180,9 +180,9 @@ npm run icons                                  # 从 public/icon.svg 重出 PNG 
 
 ## PWA 与离线
 
-- 页面框架和全部内容 JSON 一起预缓存（约 2.9 MB），飞行模式下能展开任何一章。原书更新 = 新的 Service Worker，走「内容已更新，点击刷新」提示。
+- 页面框架和全部内容 JSON 一起预缓存（约 2.9 MB），飞行模式下能展开任何一章。原书更新 = 新的 Service Worker，**自动生效、不用点**：打开后 8 秒内发现新版直接换上；之后才发现的，等 App 切到后台时再换。想法或笔记的输入框里有没保存的字时不换（昵称、搜索框不算）。
 - 外部文献链接不缓存，在新页面打开，加 `rel="noopener noreferrer"`。
-- 新 Service Worker 就绪后顶部提示「内容已更新，点击刷新」，不强制刷新。旧缓存按版本清理，不碰 IndexedDB。
+- 旧缓存按版本清理，不碰 IndexedDB。回到前台时检查一次更新，另外每小时检查一次。
 - 首次启动调用 `navigator.storage.persist()`。
 - GitHub Pages 子路径 `/crosscheck/`：Vite `base`、Manifest 的 `start_url` 和 `scope`、Service Worker 作用域都要配对。
 - User-Agent 含 `MicroMessenger` 时，顶部提示「点右上角『…』→ 在浏览器打开」（对质页不提示）。安卓 Chrome 捕获 `beforeinstallprompt` 显示安装按钮；iOS 显示「分享 → 添加到主屏幕」说明。
@@ -250,7 +250,7 @@ npm run icons                                  # 从 public/icon.svg 重出 PNG 
 PWA 与分享
 - [ ] 飞行模式下能打开、翻卡、作答、展开任意章节、标记
 - [ ] iOS Safari 和安卓 Chrome 都能装到主屏，名字、图标、启动路径正确
-- [ ] 内容更新后出现刷新提示；旧缓存清理后个人数据还在
+- [ ] 内容更新后重新打开 App 自动是新版，不用点；旧缓存清理后个人数据还在
 - [ ] 深链接、刷新、前进后退不 404
 - [ ] 单条分享链接不带任何个人数据
 - [ ] 微信内打开首页出现「在浏览器打开」提示

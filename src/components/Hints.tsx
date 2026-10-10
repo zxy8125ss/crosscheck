@@ -40,14 +40,27 @@ export function InstallHint() {
   );
 }
 
+// 有新版时不用用户点：刚打开的几秒内发现就直接换上；用到一半才发现的，等切到后台时再换，
+// 下次回来就是新版。输入框里有没保存的字时不换，避免丢字。
+const BOOT = Date.now();
+const hasDraft = () => [...document.querySelectorAll('textarea')]
+  .some(el => el.value.trim() !== '');
+
 export function UpdateBanner() {
   const { needRefresh: [need], updateServiceWorker } = useRegisterSW({
-    onRegisteredSW(_url, reg) { if (reg) setInterval(() => reg.update(), 60 * 60 * 1000); },
+    onRegisteredSW(_url, reg) {
+      if (!reg) return;
+      setInterval(() => reg.update(), 60 * 60 * 1000);
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update(); });
+    },
   });
-  if (!need) return null;
-  return (
-    <button onClick={() => updateServiceWorker(true)} className="sticky top-0 z-30 w-full bg-teal px-4 py-2 text-center text-sm text-paper">
-      内容已更新，点击刷新
-    </button>
-  );
+  useEffect(() => {
+    if (!need) return;
+    const apply = () => { if (!hasDraft()) updateServiceWorker(true); };
+    if (Date.now() - BOOT < 8000) { apply(); return; }
+    const onHide = () => { if (document.visibilityState === 'hidden') apply(); };
+    document.addEventListener('visibilitychange', onHide);
+    return () => document.removeEventListener('visibilitychange', onHide);
+  }, [need, updateServiceWorker]);
+  return null;
 }
