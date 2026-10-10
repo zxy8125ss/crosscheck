@@ -190,7 +190,7 @@ npm run icons                                  # 从 public/icon.svg 重出 PNG 
 
 ## 视觉
 
-大地暖色：米底 `#F2EADF`、墨绿主色 `#29473A`、棕 `#7A5233`、青绿点缀 `#2A9D8F`、沙色卡片 `#E7DCCB`。标题 Noto Serif SC，正文 Noto Sans SC，**不从网上加载字体**（Google Fonts 在国内不稳定），没装时回退到系统宋体 / 苹方。大圆角卡片。深色模式跟随系统。底部导航留 `env(safe-area-inset-bottom)`。小屏不出现横向滚动。
+大地暖色：米底 `#F2EADF`、墨绿主色 `#29473A`、棕 `#7A5233`、青绿点缀 `#2A9D8F`、沙色卡片 `#E7DCCB`。标题 Noto Serif SC，正文 Noto Sans SC，**不从网上加载字体**（Google Fonts 在国内不稳定），没装时回退到系统宋体 / 苹方。大圆角卡片。深色模式跟随系统。底部导航留 `env(safe-area-inset-bottom)`。小屏不出现横向滚动。**输入框、下拉框字号一律 ≥ 16px**，viewport 带 `maximum-scale=1`：iOS 在聚焦小于 16px 的输入框时会自动放大页面且不缩回，页面会左右晃（2026-10-10 真机发现）。
 
 ## 部署、署名与许可
 
