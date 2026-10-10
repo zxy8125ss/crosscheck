@@ -5,7 +5,7 @@ import { computeStats, rate } from '../lib/stats';
 import { setMeta } from '../lib/db';
 import { loadChapter } from '../lib/content';
 import { Card } from '../components/Card';
-import { CloudNudge } from '../components/Cloud';
+import { BackupNudge } from '../components/Cloud';
 import { RichText } from '../components/RichText';
 import { month, today } from '../lib/date';
 import type { ChapterFull } from '../lib/types';
@@ -29,7 +29,7 @@ export function Home() {
 
   return (
     <div className="space-y-4">
-      <CloudNudge />
+      <BackupNudge />
       <section className="grid grid-cols-3 gap-2 text-center">
         <Stat n={all.done} label="做到了" sub={`本月 ${thisMonth}`} />
         <Stat n={all.new} label="未曾设想" sub="学到的新东西" />

@@ -3,7 +3,7 @@ import type { Duel, Entry } from './types';
 import { db, SCHEMA, type Meta } from './db';
 import { today } from './date';
 
-export const PRIVATE_META = new Set(['ghToken', 'cloud', 'installedAt', 'lastExportAt']);
+export const PRIVATE_META = new Set(['ghToken', 'cloud', 'installedAt', 'lastExportAt', 'lastShareSig']);
 
 export interface Backup { app: 'crosscheck'; schema: number; exportedAt: string; content?: string; entries: Entry[]; duels: Duel[]; meta: Meta[] }
 
@@ -82,3 +82,25 @@ export async function importBackup(b: Backup, mode: 'merge' | 'replace', content
     }
   });
 }
+
+// 用系统分享面板把备份文件发出去（选微信 → 文件传输助手）。不支持分享文件的浏览器退回下载。
+export async function shareBackup(content?: string): Promise<'shared' | 'downloaded' | 'cancelled'> {
+  const b = await makeBackup(content);
+  const name = `crosscheck-${today().replace(/-/g, '')}.json`;
+  const file = new File([JSON.stringify(b, null, 1)], name, { type: 'application/json' });
+  const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
+  if (nav.share && nav.canShare?.({ files: [file] })) {
+    try { await nav.share({ files: [file], title: 'Crosscheck 备份' }); }
+    catch { return 'cancelled'; }
+  } else {
+    download(b);
+    await db.meta.bulkPut([{ key: 'lastExportAt', value: today() }, { key: 'lastShareSig', value: backupSig(b.entries, b.duels) }]);
+    return 'downloaded';
+  }
+  await db.meta.bulkPut([{ key: 'lastExportAt', value: today() }, { key: 'lastShareSig', value: backupSig(b.entries, b.duels) }]);
+  return 'shared';
+}
+
+// 记录的「指纹」：备份后有没有新变化
+export const backupSig = (entries: Entry[], duels: Duel[]) =>
+  `${entries.length}|${duels.length}|${entries.reduce((n, e) => n + e.thoughts.length + (e.action ? 1 : 0) + (e.compare ? 1 : 0) + (e.note?.length ?? 0), 0)}`;

@@ -3,7 +3,7 @@ import { useLive, useStore } from '../lib/store';
 import { computeStats, monthly, rate } from '../lib/stats';
 import { LENSES, LENS_LABEL } from '../lib/types';
 import { db, setMeta } from '../lib/db';
-import { exportNow, importBackup, validateBackup, type Backup } from '../lib/backup';
+import { exportNow, importBackup, shareBackup, validateBackup, type Backup } from '../lib/backup';
 import { today } from '../lib/date';
 import { itemHref } from '../lib/router';
 import { CloudSection } from '../components/Cloud';
@@ -21,7 +21,6 @@ export function Me() {
     <div className="space-y-5">
       <h1 className="font-serif text-2xl font-semibold text-pine">我的</h1>
 
-      <CloudSection />
 
       <Section title="进度">
         <div className="grid grid-cols-3 gap-2 text-center">
@@ -85,6 +84,8 @@ export function Me() {
       {orphans.length > 0 && <p className="text-xs text-muted">另有 {orphans.length} 条记录对应的条目已被原书删除，记录保留，不计入统计。</p>}
 
       <BackupSection lastExportAt={meta.lastExportAt as string | undefined} content={index.upstream.commit} />
+
+      <CloudSection />
 
       <Section title="设置">
         <Nickname value={(meta.nickname as string) ?? ''} />
@@ -153,11 +154,12 @@ function BackupSection({ lastExportAt, content }: { lastExportAt?: string; conte
 
   return (
     <Section title="备份">
-      <p className="text-sm text-muted">数据只存在这台设备的浏览器里。换手机、清浏览器数据前先导出。{lastExportAt ? `上次导出：${lastExportAt}。` : '还没导出过。'}</p>
+      <p className="text-sm text-muted">记录只存在这台手机上，删掉 App 就没了。点「发到微信」，在分享里选微信 →「文件传输助手」。恢复时在微信里打开那份文件，选「存储到文件」，再回这里点「恢复」选它。{lastExportAt ? `上次导出：${lastExportAt}。` : '还没导出过。'}</p>
       {stale && <p className="mt-1 text-sm text-warn">已经很久没备份了，建议导出一次。</p>}
       <div className="mt-3 flex gap-2">
-        <button className="btn-primary" onClick={() => exportNow(content)}>导出</button>
-        <button className="btn-ghost" onClick={() => file.current?.click()}>导入</button>
+        <button className="btn-primary" onClick={() => shareBackup(content)}>发到微信</button>
+        <button className="btn-ghost" onClick={() => exportNow(content)}>导出</button>
+        <button className="btn-ghost" onClick={() => file.current?.click()}>恢复</button>
         <input ref={file} type="file" accept="application/json,.json" className="hidden" onChange={e => onFile(e.target.files?.[0])} />
       </div>
       {pending && (
