@@ -10,9 +10,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: npm }
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: git clone --depth 1 https://github.com/eternity4719/HowToLiveBetter ../upstream
       # 校验失败时脚本退出码 1，不写任何文件，线上继续用旧数据

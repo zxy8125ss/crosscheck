@@ -163,7 +163,8 @@ describe('搜索', () => {
 
 // 用真实上游跑一遍，数字与上游 README 自己声明的统计比对（不写死在测试里）
 const UP = resolve(process.env.UPSTREAM || '../upstream');
-describe.skipIf(!existsSync(resolve(UP, 'book')))('真实上游', () => {
+// describe.skipIf 仍会执行回调收集用例，所以没有上游时整组不注册
+if (existsSync(resolve(UP, 'book'))) describe('真实上游', () => {
   const files = readdirSync(resolve(UP, 'book')).filter(f => /^\d\d-.*\.md$/.test(f)).map(name => ({ name, text: readFileSync(resolve(UP, 'book', name), 'utf8') }));
   const r = parseBook(files);
   const readme = readFileSync(resolve(UP, 'README.md'), 'utf8');
