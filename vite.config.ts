@@ -12,7 +12,6 @@ export default defineConfig({
     VitePWA({
       // 不自动刷新：新版就绪后由页面提示「内容已更新，点击刷新」
       registerType: 'prompt',
-      includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'Crosscheck',
         short_name: 'Crosscheck',

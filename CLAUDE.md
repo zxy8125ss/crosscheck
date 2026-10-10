@@ -209,7 +209,7 @@ npm run icons                                  # 从 public/icon.svg 重出 PNG 
 3. **M2 先想再看**：已完成。
 4. **M3 进度与数据安全**：已完成。
 5. **M4 盲答对质**：已完成。
-6. **M5 上线**：PWA、更新提示、分享、微信引导、署名免责、部署与每日同步 Action 已写好；待仓库建好后开启 GitHub Pages（Source 选 GitHub Actions）。Cloudflare Pages 备用地址需要作者用自己的 Cloudflare 账号连仓库，构建命令 `BASE=/ npm run build`，输出目录 `dist`。
+6. **M5 上线**：已上线 https://zxy8125ss.github.io/crosscheck/ （2026-10-10）。GitHub Pages 的 Source 为 GitHub Actions；每日同步 Action 在北京时间 03:00 运行。Cloudflare Pages 备用地址需要作者用自己的 Cloudflare 账号连仓库，构建命令 `BASE=/ npm run build`，输出目录 `dist`。
 
 测试：`npm test`（35 个单测，含真实上游比对）；`npm run e2e`（8 个浏览器端到端：先想再看与标记、直接看、交叉引用跳转、搜索筛选、盲答全流程、坏链接、导出清空导入、飞行模式）。iOS Safari 实机安装、微信内打开需要真机验证。
 
