@@ -6,6 +6,7 @@ import { db, setMeta } from '../lib/db';
 import { exportNow, importBackup, validateBackup, type Backup } from '../lib/backup';
 import { today } from '../lib/date';
 import { itemHref } from '../lib/router';
+import { CloudSection } from '../components/Cloud';
 
 export function Me() {
   const { index, entries, rawEntries, meta, byId } = useStore();
@@ -19,6 +20,8 @@ export function Me() {
   return (
     <div className="space-y-5">
       <h1 className="font-serif text-2xl font-semibold text-pine">我的</h1>
+
+      <CloudSection />
 
       <Section title="进度">
         <div className="grid grid-cols-3 gap-2 text-center">

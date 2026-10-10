@@ -7,6 +7,7 @@ import { Me } from './pages/Me';
 import { ItemPage } from './pages/ItemPage';
 import { Duel } from './pages/Duel';
 import { InstallHint, UpdateBanner, WeChatHint } from './components/Hints';
+import { CloudSync } from './components/Cloud';
 
 const TABS: { name: Route['name']; href: string; label: string; match: Route['name'][] }[] = [
   { name: 'home', href: '#/', label: '继续翻', match: ['home'] },
@@ -33,6 +34,7 @@ export default function App() {
     <StoreProvider>
       {route.name !== 'duel' && <WeChatHint />}
       <UpdateBanner />
+      <CloudSync />
       {/* 顶部用实色底：iOS 会给屏幕最上沿的透明内容加渐变模糊，标题会一半清楚一半发虚 */}
       <header className="sticky top-0 z-20 bg-paper pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-xl items-baseline justify-between px-4 pb-3 pt-3">

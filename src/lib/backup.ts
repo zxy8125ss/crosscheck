@@ -3,6 +3,8 @@ import type { Duel, Entry } from './types';
 import { db, SCHEMA, type Meta } from './db';
 import { today } from './date';
 
+export const PRIVATE_META = new Set(['ghToken', 'cloud', 'installedAt', 'lastExportAt']);
+
 export interface Backup { app: 'crosscheck'; schema: number; exportedAt: string; content?: string; entries: Entry[]; duels: Duel[]; meta: Meta[] }
 
 export function validateBackup(data: unknown): { ok: true; backup: Backup } | { ok: false; error: string } {
@@ -43,7 +45,9 @@ export function mergeDuels(local: Duel[], incoming: Duel[]): Duel[] {
 }
 
 export async function makeBackup(content?: string): Promise<Backup> {
-  const [entries, duels, meta] = await Promise.all([db.entries.toArray(), db.duels.toArray(), db.meta.toArray()]);
+  const [entries, duels, allMeta] = await Promise.all([db.entries.toArray(), db.duels.toArray(), db.meta.toArray()]);
+  // 密钥和云端状态只属于这台设备，不进备份
+  const meta = allMeta.filter(m => !PRIVATE_META.has(m.key));
   return { app: 'crosscheck', schema: SCHEMA, exportedAt: new Date().toISOString(), content, entries, duels, meta };
 }
 
@@ -69,7 +73,7 @@ export async function importBackup(b: Backup, mode: 'merge' | 'replace', content
       await Promise.all([db.entries.clear(), db.duels.clear()]);
       await db.entries.bulkPut(b.entries);
       await db.duels.bulkAdd(b.duels.map(({ id: _id, ...d }) => d as Duel));
-      for (const m of b.meta) if (m.key !== 'installedAt' && m.key !== 'lastExportAt') await db.meta.put(m);
+      for (const m of b.meta) if (!PRIVATE_META.has(m.key)) await db.meta.put(m);
     } else {
       await db.entries.bulkPut(mergeEntries(await db.entries.toArray(), b.entries));
       const local = await db.duels.toArray();

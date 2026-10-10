@@ -171,6 +171,16 @@ npm run icons                                  # 从 public/icon.svg 重出 PNG 
 - 每月趋势两条线：当月新增 done 数、当月新写想法数。
 - 原书删除的条目：个人记录保留，不进统计，在「我的」里标「原书已删除」。
 
+### 自动备份到 GitHub（2026-10-11 加）
+
+起因：iOS 删掉桌面图标会连同这个网页 App 的 IndexedDB 一起删，用户真实丢过一次记录。
+- 用户在「我的」里贴一次 GitHub classic token（只勾 gist 权限，链接预填，提示选 No expiration），`src/lib/cloud.ts` 用它直接调 GitHub API（支持跨域，不需要我们的服务器）。
+- 存到一个 secret Gist，描述「Crosscheck 自动备份（请勿删除）」，文件 `crosscheck-backup.json`，内容同导出文件。连接时按描述找回旧 Gist，先合并云端再上传。
+- 记录变化 3 秒后自动上传；切到后台时立即上传；打开 App 时拉一次云端合并。
+- 密钥只存本机 meta；`PRIVATE_META`（ghToken、cloud、installedAt、lastExportAt）不进导出文件和 Gist。
+- 首页：有记录但没开备份、或密钥失效时，顶部常驻提醒。
+- e2e 用模拟的 GitHub API 测「开启 → 自动上传 → 清空本机 → 重连恢复」。
+
 ### 导出 / 导入
 
 - 文件名 `crosscheck-YYYYMMDD.json`，包含三张表、schema 版本、内容数据版本。
@@ -213,7 +223,7 @@ npm run icons                                  # 从 public/icon.svg 重出 PNG 
 5. **M4 盲答对质**：已完成。
 6. **M5 上线**：已上线 https://zxy8125ss.github.io/crosscheck/ （2026-10-10）。GitHub Pages 的 Source 为 GitHub Actions；每日同步 Action 在北京时间 03:00 运行。Cloudflare Pages 备用地址需要作者用自己的 Cloudflare 账号连仓库，构建命令 `BASE=/ npm run build`，输出目录 `dist`。
 
-测试：`npm test`（35 个单测，含真实上游比对）；`npm run e2e`（9 个浏览器端到端：顶栏实色与吸顶不重叠、先想再看与标记、直接看、交叉引用跳转、搜索筛选、盲答全流程、坏链接、导出清空导入、飞行模式）。iOS Safari 实机安装、微信内打开需要真机验证。
+测试：`npm test`（35 个单测，含真实上游比对）；`npm run e2e`（10 个浏览器端到端：自动备份与恢复、顶栏实色与吸顶不重叠、先想再看与标记、直接看、交叉引用跳转、搜索筛选、盲答全流程、坏链接、导出清空导入、飞行模式）。iOS Safari 实机安装、微信内打开需要真机验证。
 
 ## 验收清单
 
