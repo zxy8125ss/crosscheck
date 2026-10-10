@@ -7,8 +7,8 @@ const page = await browser.newPage();
 const shot = async (size, file, pad = 0) => {
   await page.setViewportSize({ width: size, height: size });
   const inner = size - pad * 2;
-  await page.setContent(`<html><body style="margin:0;background:${pad ? '#29473A' : 'transparent'}"><div style="padding:${pad}px">${svg.replace('<svg ', `<svg width="${inner}" height="${inner}" `)}</div></body></html>`);
-  await page.screenshot({ path: `public/${file}`, omitBackground: !pad });
+  await page.setContent(`<html><body style="margin:0;background:#F2EADF"><div style="padding:${pad}px">${svg.replace('<svg ', `<svg width="${inner}" height="${inner}" `)}</div></body></html>`);
+  await page.screenshot({ path: `public/${file}`, omitBackground: false });
 };
 await shot(192, 'icon-192.png');
 await shot(512, 'icon-512.png');

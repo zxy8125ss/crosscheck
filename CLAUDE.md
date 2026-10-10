@@ -190,6 +190,8 @@ npm run icons                                  # 从 public/icon.svg 重出 PNG 
 
 ## 视觉
 
+图标：米底 `#F2EADF` 满版方形（不画圆角，系统自己裁；透明圆角在 iOS 主屏会变黑角），墨绿、青绿两个环加勾。改 `public/icon.svg` 后跑 `npm run icons`。
+
 大地暖色：米底 `#F2EADF`、墨绿主色 `#29473A`、棕 `#7A5233`、青绿点缀 `#2A9D8F`、沙色卡片 `#E7DCCB`。标题 Noto Serif SC，正文 Noto Sans SC，**不从网上加载字体**（Google Fonts 在国内不稳定），没装时回退到系统宋体 / 苹方。大圆角卡片。深色模式跟随系统。底部导航留 `env(safe-area-inset-bottom)`。小屏不出现横向滚动。**输入框、下拉框字号一律 ≥ 16px**，viewport 带 `maximum-scale=1`：iOS 在聚焦小于 16px 的输入框时会自动放大页面且不缩回，页面会左右晃（2026-10-10 真机发现）。**顶部用实色顶栏**（sticky、`bg-paper`、内含 `env(safe-area-inset-top)` 留白），不要让透明内容直接贴着屏幕上沿：iOS 26 会给最上沿的内容加渐变模糊，标题会一半清楚一半发虚（同日真机发现）。吸顶元素也一律实色，不用半透明加 backdrop-blur。
 
 ## 部署、署名与许可
