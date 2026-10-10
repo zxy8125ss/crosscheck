@@ -37,7 +37,7 @@ export function Search() {
 
   return (
     <div className="space-y-3">
-      <div className="sticky top-0 z-10 -mx-4 bg-paper/95 px-4 pb-2 pt-1 backdrop-blur">
+      <div className="sticky top-[calc(env(safe-area-inset-top)+3.25rem)] z-10 -mx-4 bg-paper px-4 pb-2 pt-1">
         <input value={q} onChange={e => setQ(e.target.value)} placeholder="搜标题和正文，多个词用空格隔开" type="search"
           className="w-full rounded-full border border-line bg-card px-4 py-2.5 outline-none focus:border-pine" />
         <div className="mt-2 flex items-center justify-between text-sm">

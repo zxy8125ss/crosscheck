@@ -33,15 +33,18 @@ export default function App() {
     <StoreProvider>
       {route.name !== 'duel' && <WeChatHint />}
       <UpdateBanner />
-      <header className="mx-auto flex max-w-xl items-baseline justify-between px-4 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <a href="#/" className="font-serif text-xl font-semibold tracking-wide text-pine">Crosscheck</a>
-        <span className="text-xs text-muted">先想，再对照</span>
+      {/* 顶部用实色底：iOS 会给屏幕最上沿的透明内容加渐变模糊，标题会一半清楚一半发虚 */}
+      <header className="sticky top-0 z-20 bg-paper pt-[env(safe-area-inset-top)]">
+        <div className="mx-auto flex max-w-xl items-baseline justify-between px-4 pb-3 pt-3">
+          <a href="#/" className="font-serif text-xl font-semibold tracking-wide text-pine">Crosscheck</a>
+          <span className="text-xs text-muted">先想，再对照</span>
+        </div>
       </header>
       <main className="mx-auto max-w-xl px-4 pb-28">
         {route.name === 'home' && <InstallHint />}
         <Page route={route} />
       </main>
-      <nav className="safe-bottom fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card/95 backdrop-blur">
+      <nav className="safe-bottom fixed inset-x-0 bottom-0 z-20 border-t border-line bg-card">
         <div className="mx-auto flex max-w-xl">
           {TABS.map(t => {
             const on = t.match.includes(route.name);
