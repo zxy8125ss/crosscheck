@@ -34,19 +34,21 @@ src/
 .github/workflows/    sync.yml（每天北京时间 03:00）、deploy.yml（推送即部署）
 ```
 
-## 常用命令（脚手架建好后补全）
+## 常用命令
 
 ```
 npm run sync                                   # 浅克隆上游，生成 public/data/ 与 reports/sync-日期.md
 node scripts/sync.mjs --upstream ../upstream   # 用本地上游；--force 上游没变也重跑
 node scripts/audit.mjs ../upstream             # 内容审计
 npm test                                       # Vitest；存在 ../upstream（或 UPSTREAM=路径）时加跑真实数据比对
-npm run dev / npm run build / npm run e2e      # M2 起补
+npm run dev / npm run build / npm run preview
+npm run e2e                                    # 构建后用 Playwright 跑端到端
+npm run icons                                  # 从 public/icon.svg 重出 PNG 图标
 ```
 
 ## 内容数据管线
 
-步骤：浅克隆上游取 `book/`（P1 再取 `docs/` 和 README 术语表），记上游提交号 → 解析 → 分配稳定 id、算内容哈希 → 与上一版比对 → 生成搜索索引 → 校验 → 输出。原书没变就不发布。
+步骤：浅克隆上游取 `book/`（P1 再取 `docs/` 和 README 术语表），记上游提交号 → 解析 → 分配稳定 id、算内容哈希 → 校验 → 与上一版比对 → 输出。原书没变就不发布。
 
 ### 解析规则（M0 已用全书 677 条验证，见 reports/audit.md）
 
@@ -102,7 +104,7 @@ npm run dev / npm run build / npm run e2e      # M2 起补
 ### 单条卡片的三个状态
 
 1. **遮挡态**：章节名、标题、性价比档、争议 / 待核实角标、固定提问；输入框（单行起步，可扩展）；按钮「提交并看原文」和小字「直接看」。原文区域毛玻璃遮住。
-   - 固定提问模板：`关于『{标题}』，你现在是怎么做的？为什么？`（问的是现状，不是判断或猜测）
+   - 提问：标题单独一行，下面固定写「你现在是怎么做的？为什么？」（问的是现状，不是判断或猜测）。原定「关于『标题』……」因标题中位数 29 字太长而改。
 2. **对照态**：顶部固定「我的想法」（可收起）；下方「说人话」，展开看成本、收益、证据等级、来源、备注。底部两排按钮：
    - 对照：所见略同 `same` / 未曾设想 `new` / 存疑 `doubt`（只对写过想法的条目显示）
    - 行动：做到了 `done` / 打算 `plan` / 不适用 `na`（所有条目都显示）
@@ -178,7 +180,7 @@ npm run dev / npm run build / npm run e2e      # M2 起补
 
 ## PWA 与离线
 
-- 页面框架预缓存，缓存优先。`version.json` 网络优先，3 秒超时用缓存。内容 JSON 先用缓存显示、后台检查新版，发现新版后预取全部章节。
+- 页面框架和全部内容 JSON 一起预缓存（约 2.9 MB），飞行模式下能展开任何一章。原书更新 = 新的 Service Worker，走「内容已更新，点击刷新」提示。
 - 外部文献链接不缓存，在新页面打开，加 `rel="noopener noreferrer"`。
 - 新 Service Worker 就绪后顶部提示「内容已更新，点击刷新」，不强制刷新。旧缓存按版本清理，不碰 IndexedDB。
 - 首次启动调用 `navigator.storage.persist()`。
@@ -188,7 +190,7 @@ npm run dev / npm run build / npm run e2e      # M2 起补
 
 ## 视觉
 
-大地暖色：米底 `#F2EADF`、墨绿主色 `#29473A`、棕 `#7A5233`、青绿点缀 `#2A9D8F`、沙色卡片 `#E7DCCB`。标题 Noto Serif SC，正文 Noto Sans SC。大圆角卡片。深色模式跟随系统。底部导航留 `env(safe-area-inset-bottom)`。小屏不出现横向滚动。
+大地暖色：米底 `#F2EADF`、墨绿主色 `#29473A`、棕 `#7A5233`、青绿点缀 `#2A9D8F`、沙色卡片 `#E7DCCB`。标题 Noto Serif SC，正文 Noto Sans SC，**不从网上加载字体**（Google Fonts 在国内不稳定），没装时回退到系统宋体 / 苹方。大圆角卡片。深色模式跟随系统。底部导航留 `env(safe-area-inset-bottom)`。小屏不出现横向滚动。
 
 ## 部署、署名与许可
 
@@ -204,10 +206,12 @@ npm run dev / npm run build / npm run e2e      # M2 起补
 
 1. **M0 内容审计**：已完成，见 `reports/audit.md`。
 2. **M1 数据层**：已完成。解析器、稳定 id 与改名迁移、交叉引用（与上游对照表逐条一致，正文 1188 处）、校验、差异报告；20 个测试；删半数文件、插条、改名三项演练通过。
-3. **M2 先想再看**：继续翻、卡片三态、两组标记、笔记、章节、搜索筛选、IndexedDB。
-4. **M3 进度与数据安全**：进度页、趋势图、导出导入、id 迁移。
-5. **M4 盲答对质**：封包、盲答页、揭晓、回传、对质记录。
-6. **M5 上线**：PWA 离线、更新提示、分享、微信引导、署名免责、两个地址部署、每日同步 Action。
+3. **M2 先想再看**：已完成。
+4. **M3 进度与数据安全**：已完成。
+5. **M4 盲答对质**：已完成。
+6. **M5 上线**：PWA、更新提示、分享、微信引导、署名免责、部署与每日同步 Action 已写好；待仓库建好后开启 GitHub Pages（Source 选 GitHub Actions）。Cloudflare Pages 备用地址需要作者用自己的 Cloudflare 账号连仓库，构建命令 `BASE=/ npm run build`，输出目录 `dist`。
+
+测试：`npm test`（35 个单测，含真实上游比对）；`npm run e2e`（8 个浏览器端到端：先想再看与标记、直接看、交叉引用跳转、搜索筛选、盲答全流程、坏链接、导出清空导入、飞行模式）。iOS Safari 实机安装、微信内打开需要真机验证。
 
 ## 验收清单
 

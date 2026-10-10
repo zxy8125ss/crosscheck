@@ -1,0 +1,30 @@
+name: 每日同步原书
+on:
+  schedule:
+    - cron: '0 19 * * *'   # 北京时间 03:00
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: git clone --depth 1 https://github.com/eternity4719/HowToLiveBetter ../upstream
+      # 校验失败时脚本退出码 1，不写任何文件，线上继续用旧数据
+      - run: node scripts/sync.mjs --upstream ../upstream
+      - name: 提交并触发部署
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          if [ -z "$(git status --porcelain public/data reports)" ]; then echo "原书没有变化"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data reports
+          git commit -m "同步原书 $(date -u +%F)"
+          git push
+          # 用 GITHUB_TOKEN 推送不会触发其他 workflow，手动触发部署
+          gh workflow run deploy.yml --ref main

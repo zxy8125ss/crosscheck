@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 大地暖色。字体不从网上加载（Google Fonts 在国内不稳定），用系统自带的宋体 / 黑体兜底 */
+:root {
+  --paper: 242 234 223;   /* #F2EADF 米底 */
+  --card: 250 246 239;
+  --sand: 231 220 203;    /* #E7DCCB 沙色卡片 */
+  --ink: 38 36 31;
+  --muted: 112 104 92;
+  --pine: 41 71 58;       /* #29473A 墨绿 */
+  --bark: 122 82 51;      /* #7A5233 棕 */
+  --teal: 42 157 143;     /* #2A9D8F 青绿 */
+  --line: 214 202 184;
+  --warn: 176 92 44;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: 24 27 25;
+    --card: 34 39 36;
+    --sand: 46 52 48;
+    --ink: 236 230 218;
+    --muted: 160 154 142;
+    --pine: 143 184 160;
+    --bark: 214 170 128;
+    --teal: 86 196 182;
+    --line: 62 70 65;
+    --warn: 228 150 100;
+    color-scheme: dark;
+  }
+}
+html, body { background: rgb(var(--paper)); }
+body { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.masked { filter: blur(6px); user-select: none; pointer-events: none; }
+.btn { @apply rounded-full px-4 py-2 text-sm font-medium transition active:scale-95 disabled:opacity-40; }
+.btn-primary { @apply btn bg-pine text-paper; }
+.btn-ghost { @apply btn border border-line text-ink bg-card; }
+.chip { @apply rounded-full border border-line px-3 py-1 text-xs; }
+.chip-on { @apply chip bg-pine text-paper border-pine; }
